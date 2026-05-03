@@ -24,13 +24,27 @@ def require_api_key(f):
 
 CUDA_AVAILABLE = torch.cuda.is_available()
 
-models = {
-    gpu: KModel().to('cuda' if gpu else 'cpu').eval()
-    for gpu in [False] + ([True] if CUDA_AVAILABLE else [])
-}
-pipelines = {lang_code: KPipeline(lang_code=lang_code, model=False) for lang_code in 'ab'}
-pipelines['a'].g2p.lexicon.golds['kokoro'] = 'kˈOkəɹO'
-pipelines['b'].g2p.lexicon.golds['kokoro'] = 'kˈQkəɹQ'
+_models = None
+_pipelines = None
+
+
+def get_models():
+    global _models
+    if _models is None:
+        _models = {
+            gpu: KModel().to('cuda' if gpu else 'cpu').eval()
+            for gpu in [False] + ([True] if CUDA_AVAILABLE else [])
+        }
+    return _models
+
+
+def get_pipelines():
+    global _pipelines
+    if _pipelines is None:
+        _pipelines = {lang_code: KPipeline(lang_code=lang_code, model=False) for lang_code in 'ab'}
+        _pipelines['a'].g2p.lexicon.golds['kokoro'] = 'kˈOkəɹO'
+        _pipelines['b'].g2p.lexicon.golds['kokoro'] = 'kˈQkəɹQ'
+    return _pipelines
 
 VOICES = {
     'af_heart', 'af_bella', 'af_nicole', 'af_aoede', 'af_kore',
@@ -43,6 +57,8 @@ VOICES = {
 
 
 def generate_audio(text: str, voice: str = 'af_heart', speed: float = 1.0) -> bytes:
+    pipelines = get_pipelines()
+    models = get_models()
     pipeline = pipelines[voice[0]]
     pack = pipeline.load_voice(voice)
     audio_segments = []
