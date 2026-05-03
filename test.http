@@ -1,0 +1,17 @@
+POST /tts HTTP/1.1
+User-Agent: vscode-restclient
+Content-Type: application/json
+Host: localhost:5000
+Content-Length: 58
+
+{"text": "Hello world", "voice": "af_heart", "speed": 1.0}
+
+
+###
+GET https://www.reddit.com/r/MaliciousCompliance/comments/1t0ekxo.json?raw_json=1 HTTP/1.1
+User-Agent: MyApp/1.0 by u/tisaconundrum2
+
+###
+curl -s \
+  -H "User-Agent: MyApp/1.0 by u/tisaconundrum2" \
+  "https://www.reddit.com/r/MaliciousCompliance/top.json?t=week&limit=25&raw_json=1" \
