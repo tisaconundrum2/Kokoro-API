@@ -64,6 +64,9 @@ def generate_audio(text: str, voice: str = 'af_heart', speed: float = 1.0) -> by
     buf.seek(0)
     return buf
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({'message': 'Kokoro TTS API'}), 200
 
 @app.route('/tts', methods=['POST'])
 @require_api_key
